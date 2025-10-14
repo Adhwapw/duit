@@ -1,5 +1,5 @@
-<div class="overflow-x-auto border rounded-lg bg-white">
-  <table class="min-w-full text-sm">
+<div class="table-wrap">
+  <table class="table">
     {{ $slot }}
   </table>
 </div>

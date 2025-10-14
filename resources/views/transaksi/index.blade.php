@@ -1,44 +1,80 @@
 @extends('layouts.app')
 @section('content')
-<div class="flex items-center justify-between mb-4">
+<div class="mb-4 flex items-center justify-between">
   <h1 class="text-2xl font-semibold">Transaksi</h1>
-  <a href="{{ route('transaksi.create') }}" class="px-3 py-2 border rounded">Tambah</a>
+  <a href="{{ route('transaksi.create') }}" class="btn-primary">Tambah</a>
 </div>
 
+{{-- FILTER & SEARCH --}}
+<form method="GET" class="card mb-4 grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
+  <div class="md:col-span-2">
+    <label class="block text-sm mb-1 text-slate-700">Cari (catatan / dompet / kategori)</label>
+    <input type="text" name="q" value="{{ $q }}" placeholder="mis: makan / BCA / gaji" class="input">
+  </div>
+  <div>
+    <label class="block text-sm mb-1 text-slate-700">Jenis</label>
+    <select name="jenis" class="select">
+      <option value="">-- semua --</option>
+      <option value="pemasukan" {{ $jenis==='pemasukan' ? 'selected' : '' }}>pemasukan</option>
+      <option value="pengeluaran" {{ $jenis==='pengeluaran' ? 'selected' : '' }}>pengeluaran</option>
+    </select>
+  </div>
+  <div>
+    <label class="block text-sm mb-1 text-slate-700">Tanggal Awal</label>
+    <input type="date" name="awal" value="{{ $awal }}" class="input">
+  </div>
+  <div>
+    <label class="block text-sm mb-1 text-slate-700">Tanggal Akhir</label>
+    <input type="date" name="akhir" value="{{ $akhir }}" class="input">
+  </div>
+  <div class="md:col-span-5 flex gap-2">
+    <button class="btn-ghost">Terapkan</button>
+    <a href="{{ route('transaksi.index') }}" class="btn-ghost">Reset</a>
+  </div>
+</form>
+
 <x-tabel>
-  <thead class="bg-gray-50">
+  <thead>
     <tr>
-      <th class="text-left p-2">Tanggal</th>
-      <th class="text-left p-2">Jenis</th>
-      <th class="text-left p-2">Dompet</th>
-      <th class="text-left p-2">Kategori</th>
-      <th class="text-right p-2">Jumlah</th>
-      <th class="text-left p-2">Catatan</th>
-      <th class="p-2"></th>
+      <th class="th">Tanggal</th>
+      <th class="th">Jenis</th>
+      <th class="th">Dompet</th>
+      <th class="th">Kategori</th>
+      <th class="th text-right">Jumlah</th>
+      <th class="th">Catatan</th>
+      <th class="th text-right">Aksi</th>
     </tr>
   </thead>
   <tbody>
     @forelse($items as $t)
-    <tr class="border-t">
-      <td class="p-2">{{ $t->tanggal }}</td>
-      <td class="p-2">{{ $t->jenis }}</td>
-      <td class="p-2">{{ $t->dompet?->nama_dompet }}</td>
-      <td class="p-2">{{ $t->kategori?->nama_kategori }}</td>
-      <td class="p-2 text-right">{{ number_format($t->jumlah,2,',','.') }}</td>
-      <td class="p-2">{{ $t->catatan }}</td>
-      <td class="p-2 text-right">
-        <a class="px-2 py-1 border rounded" href="{{ route('transaksi.edit',$t) }}">Edit</a>
+    <tr>
+      <td class="td">{{ $t->tanggal }}</td>
+      <td class="td">
+        @if($t->jenis === 'pemasukan')
+          <span class="pill pill-green">pemasukan</span>
+        @else
+          <span class="pill pill-rose">pengeluaran</span>
+        @endif
+      </td>
+      <td class="td">{{ $t->dompet?->nama_dompet }}</td>
+      <td class="td">{{ $t->kategori?->nama_kategori }}</td>
+      <td class="td text-right font-semibold">{{ number_format($t->jumlah,2,',','.') }}</td>
+      <td class="td">{{ $t->catatan }}</td>
+      <td class="td text-right">
+        <a class="btn-ghost" href="{{ route('transaksi.edit',$t) }}">Edit</a>
         <form class="inline" method="POST" action="{{ route('transaksi.destroy',$t) }}">
           @csrf @method('DELETE')
-          <button class="px-2 py-1 border rounded" onclick="return confirm('Hapus transaksi?')">Hapus</button>
+          <button class="btn-danger" onclick="return confirm('Hapus transaksi?')">Hapus</button>
         </form>
       </td>
     </tr>
     @empty
-    <tr><td class="p-3" colspan="7">Belum ada data.</td></tr>
+    <tr><td class="td" colspan="7">Tidak ada data untuk filter ini.</td></tr>
     @endforelse
   </tbody>
 </x-tabel>
 
-<div class="mt-4">{{ $items->links() }}</div>
+<div class="mt-4">
+  {{ $items->withQueryString()->links() }}
+</div>
 @endsection

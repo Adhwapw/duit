@@ -9,9 +9,20 @@ class DompetController extends Controller
 {
     // Tampilkan daftar dompet milik user
     public function index() {
-        $items = Dompet::where('user_id', Auth::id())->latest('dibuat_pada')->paginate(10);
-        return view('dompet.index', compact('items'));
-    }
+    $items = \App\Models\Dompet::where('user_id', \Illuminate\Support\Facades\Auth::id())
+        // jumlah pemasukan & pengeluaran per dompet
+        ->withSum(['transaksi as total_pemasukan' => function($q){
+            $q->where('jenis','pemasukan');
+        }], 'jumlah')
+        ->withSum(['transaksi as total_pengeluaran' => function($q){
+            $q->where('jenis','pengeluaran');
+        }], 'jumlah')
+        ->latest('dibuat_pada')
+        ->paginate(10);
+
+    return view('dompet.index', compact('items'));
+}
+
 
     // Form tambah
     public function create() { return view('dompet.create'); }

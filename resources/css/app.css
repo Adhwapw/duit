@@ -1,3 +1,52 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* === THEME TOKENS ala Google-ish === */
+:root{
+  --brand: #4f46e5;        /* indigo-600 */
+  --brand-2: #06b6d4;      /* cyan-500   */
+  --brand-3: #22c55e;      /* green-500  */
+  --ink: #0f172a;          /* slate-900  */
+  --muted: #64748b;        /* slate-500  */
+  --bg-soft: #f8fafc;      /* slate-50   */
+  --ring: rgba(79,70,229,.35);
+}
+
+/* === COMPONENTS === */
+@layer components {
+  .container-app { @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8; }
+  .surface { @apply bg-white rounded-2xl shadow-lg ring-1 ring-black/5; }
+  .card { @apply surface p-5; }
+  .nav-link { @apply text-sm font-medium text-slate-700 hover:text-slate-900 hover:underline; }
+  .btn { @apply inline-flex items-center justify-center rounded-xl border px-4 py-2 text-sm font-medium transition hover:shadow-md; }
+  .btn-primary { @apply btn text-white border-transparent; background: linear-gradient(135deg,var(--brand),var(--brand-2)); }
+  .btn-ghost { @apply btn border-slate-200 text-slate-700 bg-white hover:bg-slate-50; }
+  .btn-danger { @apply btn border-rose-200 text-rose-600 bg-rose-50 hover:bg-rose-100; }
+
+  .input, .select, .textarea {
+    @apply w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900
+           shadow-sm placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-[var(--ring)] focus:border-indigo-400;
+  }
+  .table-wrap { @apply surface overflow-hidden; }
+  .table { @apply w-full text-sm; }
+  .th { @apply text-left px-3 py-2 bg-slate-50 font-semibold text-slate-700; }
+  .td { @apply px-3 py-2 border-t border-slate-100; }
+  .pill { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium; }
+  .pill-green { @apply pill bg-green-50 text-green-700 ring-1 ring-green-100; }
+  .pill-rose { @apply pill bg-rose-50 text-rose-700 ring-1 ring-rose-100; }
+}
+
+/* === SOFT PAGE BACKGROUND & NAV GRADIENT === */
+body {
+  background:
+    radial-gradient(1000px 600px at -10% -10%, #e0f2fe 0%, transparent 50%),
+    radial-gradient(900px 500px at 110% -10%, #ede9fe 0%, transparent 50%),
+    radial-gradient(900px 600px at 50% 120%, #dcfce7 0%, transparent 50%),
+    var(--bg-soft);
+}
+
+.navbar-grad {
+  background: linear-gradient(90deg, #eef2ff, #e0f2fe 40%, #dcfce7 100%);
+  backdrop-filter: saturate(150%) blur(6px);
+}
