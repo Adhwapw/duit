@@ -1,9 +1,12 @@
 @extends('layouts.app')
+
 @section('content')
-<div class="flex items-center justify-between mb-4">
-  <h1 class="text-2xl font-semibold">Kategori</h1>
-  <a href="{{ route('kategori.create') }}" class="btn-primary">Tambah</a>
-</div>
+<x-page-header title="Kategori" subtitle="Kelompokkan transaksi Anda">
+  <a href="{{ route('kategori.create') }}" class="btn-primary">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M11 5h2v14h-2V5ZM5 11h14v2H5v-2Z"/></svg>
+    Tambah
+  </a>
+</x-page-header>
 
 <x-tabel>
   <thead>
@@ -16,13 +19,13 @@
   </thead>
   <tbody>
     @forelse($items as $k)
-    <tr>
+    <tr class="tr-hover">
       <td class="td">{{ $k->nama_kategori }}</td>
       <td class="td">
         @if($k->tipe === 'pemasukan')
-          <span class="pill pill-green">pemasukan</span>
+          <span class="inline-block rounded-full bg-green-50 text-green-700 px-2 py-0.5 text-xs">pemasukan</span>
         @else
-          <span class="pill pill-rose">pengeluaran</span>
+          <span class="inline-block rounded-full bg-rose-50 text-rose-700 px-2 py-0.5 text-xs">pengeluaran</span>
         @endif
       </td>
       <td class="td">
@@ -36,18 +39,18 @@
         @endif
       </td>
       <td class="td text-right">
-        <a class="btn-ghost" href="{{ route('kategori.edit',$k) }}">Edit</a>
+        <a class="link" href="{{ route('kategori.edit',$k) }}">Edit</a>
         <form class="inline" method="POST" action="{{ route('kategori.destroy',$k) }}">
           @csrf @method('DELETE')
-          <button class="btn-danger" onclick="return confirm('Hapus kategori?')">Hapus</button>
+          <button class="btn-danger ml-2">Hapus</button>
         </form>
       </td>
     </tr>
     @empty
-    <tr><td class="td" colspan="4">Belum ada data.</td></tr>
+      <tr><td class="td" colspan="4">Belum ada data.</td></tr>
     @endforelse
   </tbody>
 </x-tabel>
 
-<div class="mt-4">{{ $items->links() }}</div>
+<div class="section">{{ $items->links() }}</div>
 @endsection

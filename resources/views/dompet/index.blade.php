@@ -1,47 +1,57 @@
 @extends('layouts.app')
+
 @section('content')
-<div class="flex items-center justify-between mb-4">
-  <h1 class="text-2xl font-semibold">Dompet</h1>
-  <a href="{{ route('dompet.create') }}" class="px-3 py-2 border rounded">Tambah</a>
-</div>
+<x-page-header title="Dompet" subtitle="Daftar dompet milik Anda">
+  <a href="{{ route('dompet.create') }}" class="btn-primary">
+    {{-- plus icon --}}
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M11 5h2v14h-2V5ZM5 11h14v2H5v-2Z"/></svg>
+    Tambah
+  </a>
+</x-page-header>
 
 <x-tabel>
-  <thead class="bg-gray-50">
+  <thead>
     <tr>
-      <th class="text-left p-2">Nama</th>
-      <th class="text-left p-2">Jenis</th>
-      <th class="text-right p-2">Saldo Awal</th>
-      <th class="text-right p-2">Sisa Saldo</th> {{-- ← kolom baru --}}
-      <th class="text-left p-2">Keterangan</th>
-      <th class="p-2"></th>
+      <th class="th">Nama</th>
+      <th class="th">Jenis</th>
+      <th class="th text-right">Saldo Awal</th>
+      <th class="th text-right">Sisa Saldo</th>
+      <th class="th">Keterangan</th>
+      <th class="th text-right">Aksi</th>
     </tr>
   </thead>
   <tbody>
     @forelse($items as $d)
-    @php
-      $pemasukan   = (float)($d->total_pemasukan ?? 0);
-      $pengeluaran = (float)($d->total_pengeluaran ?? 0);
-      $sisa        = (float)$d->saldo_awal + $pemasukan - $pengeluaran;
-    @endphp
-    <tr class="border-t">
-      <td class="p-2">{{ $d->nama_dompet }}</td>
-      <td class="p-2">{{ $d->jenis_dompet }}</td>
-      <td class="p-2 text-right">{{ number_format($d->saldo_awal,2,',','.') }}</td>
-      <td class="p-2 text-right">{{ number_format($sisa,2,',','.') }}</td> {{-- ← nilai baru --}}
-      <td class="p-2">{{ $d->keterangan }}</td>
-      <td class="p-2 text-right">
-        <a class="px-2 py-1 border rounded" href="{{ route('dompet.edit',$d) }}">Edit</a>
-        <form class="inline" method="POST" action="{{ route('dompet.destroy',$d) }}">
-          @csrf @method('DELETE')
-          <button class="px-2 py-1 border rounded" onclick="return confirm('Hapus dompet?')">Hapus</button>
-        </form>
-      </td>
-    </tr>
+      @php
+        $pemasukan   = (float)($d->total_pemasukan ?? 0);
+        $pengeluaran = (float)($d->total_pengeluaran ?? 0);
+        $sisa        = (float)$d->saldo_awal + $pemasukan - $pengeluaran;
+      @endphp
+      <tr class="tr-hover">
+        <td class="td">{{ $d->nama_dompet }}</td>
+        <td class="td">
+          <span class="inline-block rounded-full px-2 py-0.5 text-xs
+            {{ $d->jenis_dompet==='tunai' ? 'bg-green-50 text-green-700' :
+               ($d->jenis_dompet==='bank' ? 'bg-sky-50 text-sky-700' : 'bg-violet-50 text-violet-700') }}">
+            {{ $d->jenis_dompet }}
+          </span>
+        </td>
+        <td class="td text-right">{{ number_format($d->saldo_awal,2,',','.') }}</td>
+        <td class="td text-right font-semibold">{{ number_format($sisa,2,',','.') }}</td>
+        <td class="td">{{ $d->keterangan }}</td>
+        <td class="td text-right">
+          <a class="link" href="{{ route('dompet.edit',$d) }}">Edit</a>
+          <form class="inline" method="POST" action="{{ route('dompet.destroy',$d) }}">
+            @csrf @method('DELETE')
+            <button class="btn-danger ml-2">Hapus</button>
+          </form>
+        </td>
+      </tr>
     @empty
-    <tr><td class="p-3" colspan="6">Belum ada data.</td></tr>
+      <tr><td class="td" colspan="6">Belum ada data.</td></tr>
     @endforelse
   </tbody>
 </x-tabel>
 
-<div class="mt-4">{{ $items->links() }}</div>
+<div class="section">{{ $items->links() }}</div>
 @endsection
